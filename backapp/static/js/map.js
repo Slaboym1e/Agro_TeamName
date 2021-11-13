@@ -508,8 +508,6 @@ const adress = [[55.1587751, 61.4085344, "улица Тимирязева,28"],
     [55.1574578, 61.4070058, "улица Цвиллинга,39"],
     [55.1434045, 61.3991020, "Загородная улица,10"],
     [55.1440230, 61.3974017, "Проходной переулок,15"],
-    [55.1559253, 61.4131370, "None,None"],
-    [55.1560672, 61.4127357, "None,None"],
     [55.1485204, 61.3989403, "улица Елькина,85"],
     [55.1483643, 61.3954764, "улица Курчатова,6Б"],
     [55.1500996, 61.3901429, "улица Курчатова,22"],
@@ -642,13 +640,14 @@ function createPointer(lat, lon, adress) {
 }
 
 ymaps.ready(init);
+
 function init() {
     let myMap = new ymaps.Map('map', {
         center: [55.154, 61.4291],
-        zoom: 11
+        zoom: 13
     });
     // Создаем многоугольник без вершин.
-    let myPolygon = new ymaps.Polygon([], {}, {
+    var myPolygon = new ymaps.Polygon([], {}, {
         fill: false,
         // Курсор в режиме добавления новых вершин.
         editorDrawingCursor: "crosshair",
@@ -663,26 +662,28 @@ function init() {
         // Ширина обводки.
         strokeWidth: 5
     });
-    let myPointsCollection = [];
+    var myPointsCollection = new ymaps.GeoObjectCollection();
     // let getoobjects=[];
     for (let i in adress) {
-        //myPointsCollection.add(new ymaps.Placemark([adress[i][0], adress[i][1]]));
-        myPointsCollection.push(createPointer(adress[i][0], adress[i][1], adress[i][2]));
+        myPointsCollection.add(new ymaps.Placemark([adress[i][0], adress[i][1]]));
+        //myPointsCollection.add(createPointer(adress[i][0], adress[i][1], adress[i][2]));
     }
-    let geoQuery = ymaps.geoQuery(myPointsCollection);
-    geoQuery
-        .addToMap(myMap)
+    var result = ymaps.geoQuery(myPointsCollection);
+    result
         .setOptions('preset', 'twirl#redIcon')
-        //.setOptions('visible', false)
-        .applyBoundsToMap(myMap);
+        .setOptions('visible', false);
     // Добавляем многоугольник на карту и коллекцию точек
     myMap.geoObjects.add(myPolygon);
+    result.addToMap(myMap);
     myPolygon.editor.startDrawing();
     // В режиме добавления новых вершин меняем цвет обводки многоугольника.
-    // myPolygon.editor.events.add('editorstatechange', function () {
-    //     console.log("123")
-    //     let hide = geoQuery.searchInside(myPolygon);
-    //     hide.setOptions('visible', true);
-    //     geoQuery.remove(hide).setOptions('visible', false);
-    // });
+    console.log(result);
+    myPolygon.editor.events.add(['statechange', 'vertexadd'], function () {
+        result
+            .setOptions('visible', false)
+            .searchIntersect(myPolygon)
+            .unsetOptions('visible');
+    });
+
+
 };
