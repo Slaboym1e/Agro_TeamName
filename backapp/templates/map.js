@@ -6,6 +6,9 @@ ymaps.ready(function () {
             searchControlProvider: 'yandex#search'
         })
 
+
+
+
         // Создаём макет содержимого.
         // MyIconContentLayout = ymaps.templateLayoutFactory.createClass(
         //     '<div style="color: #FFFFFF; font-weight: bold;">$[properties.iconContent]</div>'
@@ -48,18 +51,19 @@ ymaps.ready(function () {
         //     iconContentLayout: MyIconContentLayout
         // });
      // Создаем многоугольник без вершин.
-    var myPolygon = new ymaps.Polygon([], {}, {
-        // Курсор в режиме добавления новых вершин.
-        editorDrawingCursor: "crosshair",
-        // Максимально допустимое количество вершин.
-        editorMaxPoints: 5,
-        // Цвет заливки.
-        fillColor: 'rgba(108,168,255,0.47)',
-        // Цвет обводки.
-        strokeColor: 'rgba(113,113,255,0.59)',
-        // Ширина обводки.
-        strokeWidth: 5
-    });
+          var myPolygon = new ymaps.Polygon([], {}, {
+              // Курсор в режиме добавления новых вершин.
+              editorDrawingCursor: "crosshair",
+              // Максимально допустимое количество вершин.
+              editorMaxPoints: 5,
+              // Цвет заливки.
+              fillColor: 'rgba(108,168,255,0.47)',
+              // Цвет обводки.
+              strokeColor: 'rgba(113,113,255,0.59)',
+              // Ширина обводки.
+              strokeWidth: 5
+
+          });
     // Добавляем многоугольник на карту.
     myMap.geoObjects.add(myPolygon);
 
@@ -71,8 +75,142 @@ ymaps.ready(function () {
 
     // Включаем режим редактирования с возможностью добавления новых вершин.
     myPolygon.editor.startDrawing();
+    //////////////////////////////////////////////////////////////////////////
+
+
+     myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.153395, 61.398763]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject1 = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.153406, 61.399230]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.152845, 61.399140]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.152562, 61.398888]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.151718, 61.399167]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.151343, 61.399050]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.150967, 61.399167]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.153395, 61.398763]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.150587, 61.399086]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+          myGeoObject = new ymaps.GeoObject({
+            // Описание геометрии.
+            geometry: {
+                type: "Point",
+                coordinates: [55.149892, 61.399149]
+            },
+        }, {
+            // Опции.
+            // Иконка метки будет растягиваться под размер ее содержимого.
+            preset: 'islands#blackStretchyIcon',
+        }),
+
+
+
+
+
+
+
+
+
+
 
     myMap.geoObjects
-        .add(myPlacemark)
-        .add(myPlacemarkWithContent);
+        .add(myGeoObject)
+        .add(myGeoObject1)
+       // .add(myPlacemark)
+        //.add(myPlacemarkWithContent);
 });
