@@ -1,12 +1,9 @@
-from flask import Flask
 from sqlalchemy.orm import scoped_session, sessionmaker
 from flask import render_template, url_for, jsonify, abort
 from backapp.model import egrul
-from backapp.__inti__ import engine
+from backapp import engine
 from openpyxl import load_workbook
-app = Flask(__name__)
-
-
+from backapp import app
 @app.route('/')
 def index():
     return 'AgroHacaton 2021!'

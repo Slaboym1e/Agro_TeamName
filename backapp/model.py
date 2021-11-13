@@ -1,4 +1,4 @@
-from backapp.__inti__ import Base, engine
+from backapp.__init__ import Base, engine
 from sqlalchemy import Column, Integer, String, Float
 
 
