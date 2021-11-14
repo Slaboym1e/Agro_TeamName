@@ -620,17 +620,28 @@ const adress = [];
 //     [55.1457401, 61.4011307, "улица Елькина,85/4"],
 //     [55.1440915, 61.3969003, "Проходной переулок,10"]];
 
-async function getGeoObject(min_lat, min_lon, max_lat, max_lon)
-{
-    let response = await fetch('/get_geo_object', {
+function getGeoObject(min_lat, min_lon, max_lat, max_lon) {
+    return fetch('/get_geo_object', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body : JSON.stringify({min_lat:min_lat, min_lon:min_lon, max_lat:max_lat, max_lon:max_lon})
-      });
-    let result = await response.json();
-    console.log(result);
+        body: JSON.stringify({min_lat: min_lat, min_lon: min_lon, max_lat: max_lat, max_lon: max_lon})
+    }).then((response) => {
+        return response.json().then((data) => {
+            //console.log(data);
+            return data;
+        }).catch((err) => {
+            //console.log(err);
+        });
+    });
+    //let result = await response.json();
+
+    //console.log(result);
+
+    // console.log(myPointsCollection);
+
+
 }
 
 function createPointer(lat, lon, adress) {
@@ -652,6 +663,7 @@ function createPointer(lat, lon, adress) {
     });
     return Point;
 }
+
 
 ymaps.ready(init);
 
@@ -677,58 +689,85 @@ function init() {
         // Ширина обводки.
         strokeWidth: 5
     });
-    var myPointsCollection = new ymaps.GeoObjectCollection();
+    let myPointsCollection = new ymaps.GeoObjectCollection();
     // let getoobjects=[];
-    if(adress.length > 0)
-    {
-        for (let i in adress) {
-            //myPointsCollection.add(new ymaps.Placemark([adress[i][0], adress[i][1]]));
-            myPointsCollection.add(createPointer(adress[i][0], adress[i][1], adress[i][2]));
-        }
-    }
+    // if(adress.length > 0)
+    // {
+    //     for (let i in adress) {
+    //         //myPointsCollection.add(new ymaps.Placemark([adress[i][0], adress[i][1]]));
+    //         myPointsCollection.add(createPointer(adress[i][0], adress[i][1], adress[i][2]));
+    //     }
+    // }
     var query = ymaps.geoQuery(myPointsCollection);
-    query
-        .addToMap(myMap) //Добавляем на карту и коллекцию точек
-        .setOptions('preset', 'islands#blackDotIcon') //Задаем представление
-        .setOptions('visible', false); //Отключаем вывод на карте
+
+    //     .addToMap(myMap) //Добавляем на карту и коллекцию точек
+    //     .setOptions('preset', 'islands#blackDotIcon') //Задаем представление
+    //     .setOptions('visible', false); //Отключаем вывод на карте
     // Добавляем многоугольник
     myMap.geoObjects.add(myPolygon);
     //Переходим в режим редактирования
     myPolygon.editor.startDrawing();
 
-    myPolygon.editor.events.add(['statechange', 'vertexadd', 'vertexdragend'], function () {
-        query
-            .setOptions('visible', false)
+    // myPolygon.editor.events.add(['statechange', 'vertexadd', 'vertexdragend'], function () {
+
+    // });
+    myPolygon.editor.events.add(['statechange', 'vertexadd', 'vertexdragend', 'vertexdragstart','vertexdrag'], function () {
+             query
+             .setOptions('visible', false);
+        getGeoObject(
+            myPolygon.geometry._bounds[0][0],
+            myPolygon.geometry._bounds[0][1],
+            myPolygon.geometry._bounds[1][0],
+            myPolygon.geometry._bounds[1][1]).then((data) => {
+            query = ymaps.geoQuery(myPointsCollection);
+            query.setOptions('visible', true);
+            for (let i in data) {
+                myPointsCollection.add(new ymaps.Placemark([data[i].lat, data[i].lon]));
+                //myPointsCollection.add(createPointer(data[i].lat, data[i].lon, data[i].adress));
+            }
+            //console.log(query);
+             query
+             .addToMap(myMap) //Добавляем на карту и коллекцию точек
+             .setOptions('visible', false)
+             .setOptions('preset', 'islands#blackDotIcon') //Задаем представление
             .searchIntersect(myPolygon)
             .unsetOptions('visible');
-    });
-    myPolygon.editor.events.add(['statechange', 'vertexadd','vertexdragend'], function () {
-        getGeoObject(myPolygon.geometry._bounds[0][0], myPolygon.geometry._bounds[0][1],myPolygon.geometry._bounds[1][0], myPolygon.geometry._bounds[1][1])
+        });
+
+        //     const data = getGeoObject(
+        //         myPolygon.geometry._bounds[0][0],
+        //         myPolygon.geometry._bounds[0][1],
+        //         myPolygon.geometry._bounds[1][0],
+        //         myPolygon.geometry._bounds[1][1]);
+        // console.log(data);
+        //
+        //
+
     });
 
- var button = new ymaps.control.Button({
-    data: {
-        content: 'Red button',
-        title: 'Press the button'
-    },
-    options: {
-         layout: ymaps.templateLayoutFactory.createClass(
-             
-             // Если кнопка не нажата, применяется CSS стиль 'myButton'.
-             // Если кнопка нажата, к ней применятся CSS-стили 'myButton' и 'myButtonSelected'.
+    var button = new ymaps.control.Button({
+        data: {
+            content: 'Red button',
+            title: 'Press the button'
+        },
+        options: {
+            layout: ymaps.templateLayoutFactory.createClass(
+                // Если кнопка не нажата, применяется CSS стиль 'myButton'.
+                // Если кнопка нажата, к ней применятся CSS-стили 'myButton' и 'myButtonSelected'.
 
-            "<div class='myButton {% if state.selected %}" +
-             "myButtonSelected" +
-             "{% endif %}'" +
-             " title='{{ data.title }}'>" +
-            "{{ data.content }}" +
-            "</div>"
+                "<div class='myButton {% if state.selected %}" +
+                "myButtonSelected" +
+                "{% endif %}'" +
+                " title='{{ data.title }}'>" +
+                "{{ data.content }}" +
+                "</div>"
             ),
-             // Чтобы другие элементы управления корректно позиционировались по горизонтали,
+            // Чтобы другие элементы управления корректно позиционировались по горизонтали,
             // нужно обязательно задать максимальную ширину для макета.
             maxWidth: 150
-        }});
-myMap.controls.add(button, { float: 'left', floatIndex: 0 });
+        }
+    });
+    myMap.controls.add(button, {float: 'left', floatIndex: 0});
 
 // Можно задать позиционирование относительно краев карты. В этом случае
 // значение опции maxWidth не влияет на позиционирование
