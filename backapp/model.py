@@ -1,5 +1,5 @@
 from backapp.__init__ import Base, engine
-from sqlalchemy import Column, Integer, String, Float
+from sqlalchemy import Column, Integer, String, Float, Date
 
 class geoobject(Base):
     __tablename__ = 'geo_objects'
@@ -32,6 +32,33 @@ class egrul(Base):
 
     def __repr__(self):
         return {'id':self.id, 'title':self.title, 'inn':self.inn}
+
+
+class nvos(Base):
+    __tablename__="nvos"
+    id = Column(Integer, primary_key=True)
+    objectcode = Column(String(20), unique=False, nullable=True)
+    title = Column(String(256), unique=False, nullable=True)
+    oktmo = Column(String(10), unique=False, nullable=True)
+    adress = Column(String(255), unique=False, nullable=True)
+    orgname = Column(String(256), unique=False, nullable=True)
+    uradress = Column(String(255), unique=False, nullable=True)
+    inn = Column(String(10), unique=False, nullable=True)
+    ogrn = Column(String(15), unique=False, nullable=True)
+    okved = Column(String(128), unique=False, nullable=True)
+    nvoscategory = Column(Integer)
+    assignmentcrits = Column(String(128), unique=False, nullable=True)
+    sources = Column(Integer)
+    totalemiss = Column(Float)
+    dischnum = Column(Integer)
+    wasteobjquantity = Column(Integer)
+    dischco2 = Column(Float)
+    registration = Column(Date)
+    actualdate = Column(Date)
+    exclusiondate = Column(Date)
+    commissioningdate = Column(Date)
+
+
 
 
 Base.metadata.create_all(bind=engine)
