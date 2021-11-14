@@ -669,22 +669,21 @@ function init() {
         myPointsCollection.add(new ymaps.Placemark([adress[i][0], adress[i][1]]));
         //myPointsCollection.add(createPointer(adress[i][0], adress[i][1], adress[i][2]));
     }
-    var result = ymaps.geoQuery(myPointsCollection);
-    result
-        .setOptions('preset', 'islands#blackDotIcon')
-        .setOptions('visible', false);
-    // Добавляем многоугольник на карту и коллекцию точек
+    var query = ymaps.geoQuery(myPointsCollection);
+    query
+        .addToMap(myMap) //Добавляем на карту и коллекцию точек
+        .setOptions('preset', 'islands#blackDotIcon') //Задаем представление
+        .setOptions('visible', false); //Отключаем вывод на карте
+    // Добавляем многоугольник
     myMap.geoObjects.add(myPolygon);
-    result.addToMap(myMap);
+    //Переходим в режим редактирования
     myPolygon.editor.startDrawing();
-    // В режиме добавления новых вершин меняем цвет обводки многоугольника.
-    console.log(result);
+
     myPolygon.editor.events.add(['statechange', 'vertexdrag','vertexdragend'], function () {
-        result
+        query
             .setOptions('visible', false)
             .searchIntersect(myPolygon)
-            .unsetOptions('visible')
-
+            .unsetOptions('visible');
     });
 
 
