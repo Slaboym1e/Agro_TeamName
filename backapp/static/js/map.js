@@ -643,8 +643,9 @@ ymaps.ready(init);
 
 function init() {
     let myMap = new ymaps.Map('map', {
-        center: [55.154, 61.4291],
-        zoom: 13
+        center: [55.151574, 61.395457],
+        zoom: 15,
+        behaviors: ["default", "scrollZoom"]
     });
     // Создаем многоугольник без вершин.
     var myPolygon = new ymaps.Polygon([], {}, {
@@ -670,7 +671,7 @@ function init() {
     }
     var result = ymaps.geoQuery(myPointsCollection);
     result
-        .setOptions('preset', 'twirl#redIcon')
+        .setOptions('preset', 'islands#blackDotIcon')
         .setOptions('visible', false);
     // Добавляем многоугольник на карту и коллекцию точек
     myMap.geoObjects.add(myPolygon);
@@ -678,12 +679,40 @@ function init() {
     myPolygon.editor.startDrawing();
     // В режиме добавления новых вершин меняем цвет обводки многоугольника.
     console.log(result);
-    myPolygon.editor.events.add(['statechange', 'vertexadd'], function () {
+    myPolygon.editor.events.add(['statechange', 'vertexdrag','vertexdragend'], function () {
         result
             .setOptions('visible', false)
             .searchIntersect(myPolygon)
-            .unsetOptions('visible');
+            .unsetOptions('visible')
+
     });
 
 
+ var button = new ymaps.control.Button({
+    data: {
+        content: 'Red button',
+        title: 'Press the button'
+    },
+    options: {
+         layout: ymaps.templateLayoutFactory.createClass(
+             
+             // Если кнопка не нажата, применяется CSS стиль 'myButton'.
+             // Если кнопка нажата, к ней применятся CSS-стили 'myButton' и 'myButtonSelected'.
+
+            "<div class='myButton {% if state.selected %}" +
+             "myButtonSelected" +
+             "{% endif %}'" +
+             " title='{{ data.title }}'>" +
+            "{{ data.content }}" +
+            "</div>"
+            ),
+             // Чтобы другие элементы управления корректно позиционировались по горизонтали,
+            // нужно обязательно задать максимальную ширину для макета.
+            maxWidth: 150
+        }});
+myMap.controls.add(button, { float: 'left', floatIndex: 0 });
+
+// Можно задать позиционирование относительно краев карты. В этом случае
+// значение опции maxWidth не влияет на позиционирование
+// элементов управления.
 };
