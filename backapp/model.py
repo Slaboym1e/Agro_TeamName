@@ -1,6 +1,12 @@
 from backapp.__init__ import Base, engine
 from sqlalchemy import Column, Integer, String, Float
 
+class geoobject(Base):
+    __tablename__ = 'geo_objects'
+    id = Column(Integer, primary_key=True)
+    lat = Column(Float)
+    lon = Column(Float)
+    adress = Column(String(255), unique=False, nullable=True)
 
 class egrul(Base):
     __tablename__ = 'egrul'
