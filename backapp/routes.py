@@ -1,30 +1,42 @@
 from sqlalchemy.orm import scoped_session, sessionmaker
-from flask import render_template, url_for, jsonify, abort
-from backapp.model import egrul
+from flask import render_template, url_for, jsonify, abort, request
+from backapp.model import egrul, geoobject
 from backapp import engine
 from openpyxl import load_workbook
 from backapp import app
-@app.route('/')
-def index():
-    return 'AgroHacaton 2021!'
+
+def mserialize(val):
+    #print(val)
+    if type(val) == dict:
+        return val
+    else:
+        return {v: getattr(val, v) for v in val.__dict__ if v!="_sa_instance_state"}
+
+# mserialize - serialize val object
+def mserialize_list(list):
+    return [mserialize(m) for m in list]
 
 @app.route('/map')
 def create_map():
     return render_template("map.html")
 
-@app.route('/parse_test')
-def test():
-    workbook = load_workbook('C:\\Temp\\1.xlsx', read_only=True)
-    first_sheet = workbook.get_sheet_names()[0]
-    worksheet = workbook.get_sheet_by_name(first_sheet)
+# @app.route('/map')
+# def create_map():
+#     return render_template("map.html")
 
-    for row in worksheet.iter_rows():
-        print(row)
+@app.route('/get_geo_object', methods=['GET', 'POST'])
+def getGeoObject():
+    data = request.get_json()
+    Session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+    #
 
-    # check out the last row
-    for cell in row:
-        print(cell)
-    return True
+    go = Session.query(geoobject).filter(geoobject.lat > data['min_lat'], geoobject.lat < data['max_lat'],
+                                         geoobject.lon > data['min_lon'], geoobject.lon < data['max_lon']).all()
+    Session.close()
+    print(len(go))
+    return jsonify(mserialize_list(go))
+
+
 @app.route('/uploadegrul')
 def uploadegrul():
     Session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
